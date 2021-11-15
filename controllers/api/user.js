@@ -8,7 +8,7 @@ router.route('/').post(async (req, res) => {
       !req.body.hasOwnProperty('email') ||
       !req.body.hasOwnProperty('password')
     ) {
-      res.status(404).json(new Error('Not all fields provided.'));
+      res.status(400).json({ message: 'Not all fields provided.' });
     }
     const newUser = await User.create(req.body);
     res.status(200).json(newUser);

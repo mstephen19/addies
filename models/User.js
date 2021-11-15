@@ -30,6 +30,7 @@ UserSchema.pre('save', async function (next) {
     if (!this.password.match(regex)) {
       return next(new Error('Password failed validation'));
     }
+
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     return next();
@@ -38,15 +39,18 @@ UserSchema.pre('save', async function (next) {
   }
 });
 
-UserSchema.pre('updateOne', async function (next) {
+UserSchema.pre('findOneAndUpdate', async function (next) {
   try {
+    if (!this._update.password) return next();
+
     const regex =
       /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/;
-    if (!this.password.match(regex)) {
+    if (!this._update.password.match(regex)) {
       return next(new Error('Password failed validation'));
     }
+
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this._update.password = await bcrypt.hash(this._update.password, salt);
     return next();
   } catch (err) {
     return next(err);
