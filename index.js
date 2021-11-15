@@ -12,8 +12,12 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/addies', {
-  useNewUrlParser: true,
-  useFindAndModify: false,
+  // useNewUrlParser: true,
+  // useFindAndModify: false,
+});
+
+mongoose.connection.once('open', () => {
+  console.log('Successfully connected to DB');
 });
 
 const store = new MongoDBStore({
@@ -46,5 +50,5 @@ app.use(session(sess));
 app.use('/', routes);
 
 app.listen(PORT, () => {
-  console.log(`http:localhost:${PORT}`);
+  console.log(`http://localhost:${PORT}`);
 });
